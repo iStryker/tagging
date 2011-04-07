@@ -88,7 +88,7 @@ function drupalwiki_extractor_strip_symbols($text) {
             . '\\x{32C0}-\\x{32CB}'
             . '\\x{3358}-\\x{3370}'
             . '\\x{33E0}-\\x{33FE}'
-            . '\\x{A490}-\\x{A4C6}'d;
+            . '\\x{A490}-\\x{A4C6}';
 
     return preg_replace(
         array(
