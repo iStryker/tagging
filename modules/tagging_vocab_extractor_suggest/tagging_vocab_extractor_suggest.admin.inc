@@ -1,8 +1,13 @@
 <?php
-// $Id$
 
-// Author: Eugen Mayer (http://kontextwork.de)
-// Copyright 2010
+/**
+ * @file
+ * Provides administration functions for tagging_vocab_extractor
+ *
+ * Author: Eugen Mayer (http://kontextwork.de)
+ * Copyright 2010
+ */
+
 /*
  * Providing a administration interface for tagging_vocab_extractor.
  */
@@ -14,7 +19,7 @@ function tagging_vocab_extractor_suggest_admin_settings() {
       '#valid' => 'string',
       '#default_value' => variable_get('tagging_vocab_extractor_suggest_cck', '')
   );
-   
+
   $form['tagging_vocab_extractor_suggest_max_word_count'] = array(
       '#type' => 'textfield',
       '#title' => t('Maximum word count'),

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file:
@@ -36,7 +35,7 @@ function extractor_ng_extract($text) {
     while (!$sorted) {
       $sorted = TRUE;
       for ($i = 0; $i < count($sorted_terms) - 1; $i++) {
-        if (strlen($sorted_terms[$i]) < strlen($sorted_terms[$i+1])) {
+        if (drupal_strlen($sorted_terms[$i]) < drupal_strlen($sorted_terms[$i+1])) {
           $tmp = $sorted_terms[$i+1];
           $sorted_terms[$i+1] = $sorted_terms[$i];
           $sorted_terms[$i] = $tmp;
@@ -57,20 +56,20 @@ function extractor_ng_extract($text) {
  */
 function _extractor_ng_split($text) {
   $tmp = preg_split("/[\s,.:\-\(\)\[\]{}*\/]+/", $text);
-  
+
   $result = array();
   $max_word_count = variable_get('tagging_vocab_extractor_suggest_max_word_count', 4);
 
-  foreach($tmp as $key => $word) {
-	$result[] = $word;
- 	for($i = 1;$i <=$max_word_count;$i++) {
-		if(array_key_exists(($key+$i),$tmp)) {
-			$word = "$word {$tmp[$key+$i]}";
-			$result[] = $word;
-		}
-	}	
+  foreach ($tmp as $key => $word) {
+    $result[] = $word;
+    for ($i = 1; $i <=$max_word_count; $i++) {
+      if (array_key_exists(($key + $i), $tmp)) {
+        $word = "$word {$tmp[$key + $i]}";
+        $result[] = $word;
+      }
+    }
   }
-  
+
   return $result;
 }
 

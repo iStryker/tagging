@@ -1,8 +1,12 @@
 <?php
-// $Id$
 
-// Author: Eugen Mayer (http://kontextwork.de)
-// Copyright 2010
+/**
+ * @file
+ * Provides administration functionality for tagging
+ *
+ * Author: Eugen Mayer (http://kontextwork.de)
+ * Copyright 2010
+ */
 
 /*
  * Providing a administration interface for tagging.

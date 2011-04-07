@@ -10,7 +10,7 @@
       var context = get_context($(this).attr('class'));
       
       if(context === null) {
-        alert('cant initialize tagging-widget: "'+$(this).attr('id')+'"..did you forget the "taggig-widget-$CONTEXT" class?');
+        alert( Drupal.t('cant initialize ') + "tagging-widget: " + $(this).attr('id') + Drupal.t("..did you forget the ") + "tagging-widget-$CONTEXT" + Drupal.t(" class?"));
         return;
       }
       // Our containers.
