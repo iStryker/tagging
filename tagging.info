@@ -1,8 +1,8 @@
-; $Id$
+; Eugen Mayer (http://kontextwork.de)
+; Converted from D6 to D7 by iStryker
 name = Tagging
 description = This widget is replacing the default Drupal-Tagging-Interface with a more visual driven one, to make tagging even easier. (by <a href="http://kontextwork.de"KontextWork</a>)
-package = "Drupal Wiki"
-version = "6.x-2.4"
-core = 6.x
+core = 7.x
 dependencies[] = taxonomy
-project = "tagging"
+files[] = tagging.module
+package = Taxonomy
