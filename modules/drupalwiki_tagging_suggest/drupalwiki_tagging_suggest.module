@@ -53,6 +53,11 @@ function _drupalwiki_tagging_suggest_mark_new(&$tags, $vids) {
       }
     }
   }
+  else {
+    foreach ($tags as &$tag) {
+    	$tag['#new'] = TRUE;
+    }  
+  }
   //return $terms;
 }
 
