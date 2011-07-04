@@ -151,8 +151,8 @@ function tagging_field_widget_form(&$form, &$form_state, $field, $instance, $lan
     // dsm($element);
   }
   drupal_add_css(drupal_get_path('module', 'tagging') . '/css/tagging.css');
-  drupal_add_js(drupal_get_path('module', 'tagging') . '/js/tagging.plugin.js');
   drupal_add_js(drupal_get_path('module', 'tagging') . '/js/tagging.init.js');
+  drupal_add_js(drupal_get_path('module', 'tagging') . '/js/tagging.plugin.js');
   return $element;
 }
 
