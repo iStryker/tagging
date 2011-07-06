@@ -74,15 +74,12 @@ function tagging_field_widget_info() {
     ),
   );
 }
+
 /**
  * Implements hook_field_widget_form().
  */
 function tagging_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-  // dsm($instance);
-  // dsm($element);
-  // dsm($items);
-  // dsm($field);
-  // dsm($form);
+
   $settings = $instance['widget']['settings'];
   
   // iStryker April 7th, 2011: maybe a problem in the future.  only 1 allowed value is allowed so far. 
@@ -106,11 +103,11 @@ function tagging_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       $tags[$item['tid']] = isset($item['taxonomy_term']) ? $item['taxonomy_term'] : taxonomy_term_load($item['tid']);
     }
   
-  
     // order (temporary comments)
     // Active Tags: term1(x), term2(x), etc
     // Textfield (autocomplete),  Add button
     // Suggestions
+    
     $element['field_terms'] = array(
       '#markup' => theme('tagging_tags_list', array('tags' => $tags, 'vid' => $vid->vid)),
     );
@@ -126,7 +123,6 @@ function tagging_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       '#description' => $description,
     );
     
-    //$element['input_field']['textfield'] = array(
     $element['input_field']['textfield'] = array(
       '#type' => 'textfield',
       '#default_value' => '',
@@ -140,51 +136,42 @@ function tagging_field_widget_form(&$form, &$form_state, $field, $instance, $lan
         ),
         'id' => 'tagging-widget-input-' . $vid->vid,
       ),
-      //'#vid' => $vid->vid,
     );
-
-    //write is as an item
-    //$element[$vid->vid]['input']['#markup'] = theme('tagging_widget_input', array('element' => $inputfield));
     
     $element['input_field']['button'] = array(
-      '#markup' => '<a class="tagging-button-container" href="#" title="' . t('Add') . '"><span class="tagging-button tagging-button-' . $vid->vid . '"></span></a>',
+      '#markup' => theme('tagging_widget_button', array('element' => $element, 'vid' => $vid->vid)),
     );
     // add suggestions here
     $element['suggestions']['#value'] = _tagging_add_suggestions( array(
         'nid' => $form['nid']['#value'],
-	    'vid' => $vid->vid,
+	      'vid' => $vid->vid,
       )
     );
 
     $element['suggestions']['#markup'] = theme('tagging_suggestions_list', array('suggestions' => $element['suggestions']['#value'], 'vid' => $vid->vid));
-    // We actually just need it in the background, so that we dont need to fight in the 
-    // validation filter. We can let the normal taxonomy.module validators and submitters do their job.
+    
+    // Stores terms
     $element['input_field']['terms'] = array(
       '#type' => 'hidden',
       '#default_value' => taxonomy_implode_tags($tags),
       '#size' => $settings['size'],
       '#maxlength' => 1024,
-      //'#element_validate' => array('active_tags_taxonomy_autocomplete_validate'),
       '#attributes' => array('class' => array('tagging-widget-target-' . $vid->vid)),
       '#theme_wrappers' => array(),
     );
-    // dsm('afterwards');
-    // dsm($element);
   }
   drupal_add_css(drupal_get_path('module', 'tagging') . '/css/tagging.css');
   drupal_add_js(drupal_get_path('module', 'tagging') . '/js/tagging.plugin.js');
   
   $element += array(
     '#type' => 'item',
-    '#vid' => $vid->vid,    
     '#attributes' => array('class' => 
                        'tagging-widget-input-wrapper', 
                        'clearfix'
                      ),
     '#element_validate' => array('tagging_taxonomy_autocomplete_validate'),
-    //'#theme' => 'tagging_field_widget',
   );
-  // $element += array('#markup' => theme('tagging_field_widget', array('element' => $element)),);
+  
   
   return $element;
 }
@@ -193,9 +180,8 @@ function tagging_field_widget_form(&$form, &$form_state, $field, $instance, $lan
  * Implements hook_field_widget_settings_form().
  */
 function tagging_field_widget_settings_form($field, $instance) {
-  // dsm($field);
-  // dsm($instance);
 }
+
 /**
  * Implements hook_field_widget_error().
  */
@@ -203,13 +189,14 @@ function tagging_field_widget_error($element, $error, $form, &$form_state) {
   form_error($element, $error['message']);
 }
 
+/**
+ *  
+ * Called by form to validate terms
+ * @param $element
+ * @param $form_state
+ */
 function tagging_taxonomy_autocomplete_validate($element, &$form_state) {
-	// grabs the values store in the form_state and adding them to default taxonomy validation
-	//$field = $element['#parents']['0']
 	// combines the value(s) in the textfield and saved values
-	
-	//foreach $form_state['input']['']
-	
 	if (!empty($element['input_field']['terms']['#value'])) {
 		 if (!empty($element['input_field']['textfield']['#value'])) {
 		   $element['#value'] =  $element['input_field']['textfield']['#value'] . ',' . $element['input_field']['terms']['#value'];
@@ -221,115 +208,6 @@ function tagging_taxonomy_autocomplete_validate($element, &$form_state) {
   taxonomy_autocomplete_validate($element, $form_state);
 }
 
-// /**
- // * Implements hook_elements_info().
- // * Registering the new form element, so we can render the tagging form element properly
- // */
-// function tagging_elements_info() {
-  // $type['tagging_widget'] = array(
-    // '#input' => TRUE,
-    // '#after_build' => array('_tagging_widget_javascript'),
-    // '#process' => array('_tagging_add_suggestions'),
-    // '#default_value' => -1,
-  // );
-  // return $type;
-// }
-
-// /**
- // * Implements of hook_form_alter().
- // */
-// function tagging_form_alter(&$form, &$form_state, $form_id) {
-  // dsm($form);
-  // // Check if we are editting a node and we actually have a tag taxonomy.
-  // if ($form['#node_edit_form'] == TRUE && isset($form['taxonomy']['tags'])) {
-    // foreach ($form['taxonomy']['tags'] as $id => $values) {
-      // if (variable_get('tagging_inject_' . $id, 0) == 1) {
-	    
-        // $form['taxonomy']['tags'][$id]['#type'] = 'tagging_widget';
-        // $form['taxonomy']['tags'][$id]['#vid'] = $id;
-        // $form['taxonomy']['tags'][$id]['#nid'] = $form['nid']['#value'];
-      // }
-    // }
-  // }
-  // if (isset($form['field_tags']) && variable
-  // // Check if user_terms is present
-  // if (isset($form['user_terms'])) {
-    // // Iterate all the available vocabularies
-    // foreach ($form['user_terms'] as $key => $value) {
-      // // Only act on form items containing vocabularies
-      // if (strstr($key, 'user_terms_')) {
-        // // Extract the vid
-        // $id = str_replace('user_terms_', '', $key);
-        // // Make sure it's numeric
-        // if (is_numeric($id)) {
-          // // Check if the tagging widget is enabled for this
-          // if (variable_get('tagging_inject_' . $id, 0)) {
-            // $form['user_terms'][$key]['#type'] = 'tagging_widget';
-            // $form['user_terms'][$key]['#vid'] = $id;
-            // $form['user_terms'][$key]['#uid'] = $form['#uid'];
-          // }
-        // }
-      // }
-    // }
-  // }
-// }
-
-// /**
- // * Implements of hook_form_ID_alter().
- // */
-// function tagging_form_taxonomy_form_vocabulary_alter(&$form, $form_state ) {
-  // $form['settings']['tagging_inject'] = array(
-    // '#type' => 'checkbox',
-    // '#title' => t('Tagging Widget'),
-    // '#weight' => 10,
-    // '#default_value' => variable_get('tagging_inject_' . $form['vid']['#value'], 0),
-    // '#description' => t('Use the visual tagging-widget, when this taxonomy is shown to the user'),
-  // );
-  // $form['#submit'][] = 'tagging_form_vocabulary_submit';
-// }
-
-
-
-/**
- * Rendering the tagging widget.
- */
-function theme_tagging_widget($variables) {
-  // TODO: Maybe use a file as a template..but otherwise...performance?
-  $element = $variables['element'];
-	$vid = $element['#vid'];
-  $cur_tags = '';
-
-  $id = "tagging-widget-input-$vid";
-  $fieldset['#title'] = $element['#title'];
-  $fieldset['#collapsed'] = FALSE;
-  // Well this is the original. We actually just need it in the background, so that we
-  // dont need to fight in the validation filter. We can let the normal taxonomy.modul
-  // validators and submitters do their job.
-  $element['#type'] = 'hidden';
-  $element['#attributes']['class'] = "tagging-widget-target-$vid";
-  $old_input = theme('hidden', $element);
-
-  // Ok now lets render the input textfield we will use for the tagging
-  $element['#type'] = 'textfield';
-  // Its convention that the tagging-widget-VID class it addid. That vid will be used
-  // to get the unique "context" id for all the other wrappers and functions.
-  $element['#attributes']['class'] = "tagging-widget-input $id";
-  $element['#id']= $id;
-  $element['#title']= "";
-
-  if ($element['#description'] == '') {
-    $element['#description'] = t("Type and press enter to add the tag");
-  }
-  $element['#field_suffix'] = theme('tagging_widget_button', array('vid' => $vid)) . $old_input;
-  $output .= theme('tagging_tags_list', array('tags' => split(',', $element['#value']), 'vid' => $vid))
-            . '<div class="taggin-widget-input-wrapper clearfix">'
-     //       . theme('textfield', $element)
-            . '</div>'
-            . theme('tagging_suggestions_list', array('suggestions' => $element['#suggestions'], 'vid' => $vid));
-  $fieldset['#value'] = $output;
-  $output = theme('fieldset', $fieldset);
-  return theme('tagging_widget_wrapper', array('content' => $output, 'vid' => $vid));
-}
 
 /**
  * Rendering the widget button
@@ -424,10 +302,8 @@ function _tagging_add_suggestions($variables) {
   // dsm($suggestions);
   drupal_alter('tagging_suggestions', $suggestions);
   
-  // dsm($suggestions);
   // Validation
   if ( !is_array($suggestions) ) {
-    // dsm('no suggestions');
     $suggestions = array();
     watchdog(WATCHDOG_WARNING, 'Tagging: Could not parse suggestion array - maybe some hooks are out of bound?');
   }
